@@ -57,6 +57,34 @@ namespace ShufflePlay
         }
 
         /// <summary>
+        /// Gets the songs tracks.
+        /// </summary>
+        /// <value>
+        /// The songs tracks.
+        /// </value>
+        public string[] OriginalSongsTracks
+        {
+            get
+            {
+                return this.OriginalTracks.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Gets the shuffle history tracks.
+        /// </summary>
+        /// <value>
+        /// The shuffle history tracks.
+        /// </value>
+        public string[] ShuffleHistoryTracks
+        {
+            get
+            {
+                return this.ShuffleHistory.Values.ToArray();
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ShufflePlayList"/> class.
         /// </summary>
         /// <param name="tracks">The tracks.</param>
