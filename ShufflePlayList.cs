@@ -10,12 +10,20 @@ namespace ShufflePlay
     public class ShufflePlayList
     {
         /// <summary>
-        /// Gets or sets the tracks.
+        /// Gets or sets the playing tracks.
         /// </summary>
         /// <value>
-        /// The tracks.
+        /// The playing tracks.
         /// </value>
-        protected List<string> Tracks { get; set; }
+        protected List<string> PlayingTracks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the original songs.
+        /// </summary>
+        /// <value>
+        /// The original songs.
+        /// </value>
+        protected List<string> OriginalTracks { get; set; }
 
         /// <summary>
         /// Gets or sets the shuffle history.
@@ -31,12 +39,32 @@ namespace ShufflePlay
         private bool _playing;
 
         /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="ShufflePlayList"/> is playing.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if playing; otherwise, <c>false</c>.
+        /// </value>
+        protected bool Playing
+        {
+            get
+            {
+                return _playing;
+            }
+            set
+            {
+                _playing = value;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ShufflePlayList"/> class.
         /// </summary>
         /// <param name="tracks">The tracks.</param>
         public ShufflePlayList(IEnumerable<string> tracks)
         {
-            this.Tracks = tracks.ToList();
+            this.OriginalTracks = tracks.ToList();
+            this.PlayingTracks = new List<string>();
+            this.ShuffleHistory = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -45,7 +73,12 @@ namespace ShufflePlay
         /// <param name="track">The track.</param>
         public void AddTrack(string track)
         {
-            this.Tracks.Add(track);
+            this.OriginalTracks.Add(track);
+
+            if (this.Playing)
+            {
+                this.PlayingTracks.Add(track);
+            }
         }
 
         /// <summary>
@@ -55,49 +88,47 @@ namespace ShufflePlay
         public async Task ShufflePlayAsync()
         {
             // Exit if already playing...
-            if (_playing)
+            if (this.Playing)
             {
                 return;
-            }
-
-            // Incase of a suffle replay...
-            if (this.Tracks.Count == 0 && this.ShuffleHistory.Values.Count > 0)
-            {
-                this.Tracks.AddRange(this.ShuffleHistory.Values.OrderBy(x => x));
             }
 
             // Run code on another thread...
             await Task.Run(() =>
             {
-                _playing = true;
+                this.Playing = true;
+
                 double unixTime = ConvertToUnixTimestamp(DateTime.Now.ToUniversalTime());
                 int seed = Convert.ToInt32(unixTime);
 
                 Random rnd = new Random(seed);
 
-                this.ShuffleHistory = new Dictionary<string, string>();
+                this.PlayingTracks.Clear();
+                this.PlayingTracks.AddRange(this.OriginalTracks);
+                this.ShuffleHistory.Clear();
+
                 int count = 0;
 
-                while (this.Tracks.Count > 0 && _playing)
+                while (this.PlayingTracks.Count > 0 && this.Playing)
                 {
                     count++;
-                    int track = rnd.Next(0, this.Tracks.Count);
+                    int track = rnd.Next(0, this.PlayingTracks.Count);
 
-                    if (!this.ShuffleHistory.ContainsKey(this.Tracks[track]))
+                    if (!this.ShuffleHistory.ContainsKey(this.PlayingTracks[track]))
                     {
                         // Song has not been played before...
-                        this.ShuffleHistory.Add(this.Tracks[track], this.Tracks[track]);
+                        this.ShuffleHistory.Add(this.PlayingTracks[track], this.PlayingTracks[track]);
 
                         // Play song at this point...
-                        Console.WriteLine("{1:000}. Playing {0}", this.Tracks[track], count);
+                        Console.WriteLine("{1:000}. Playing {0}", this.PlayingTracks[track], count);
                         Thread.Sleep(200);
                     }
 
-                    this.Tracks.RemoveAt(track);
+                    this.PlayingTracks.RemoveAt(track);
                 }
             });
 
-            Console.WriteLine("*\n* PLAY THREAD DONE!!!\n*");
+            this.Playing = false;
 
             return;
         }
@@ -107,7 +138,7 @@ namespace ShufflePlay
         /// </summary>
         public void StopPlay()
         {
-            _playing = false;
+            this.Playing = false;
         }
 
 
