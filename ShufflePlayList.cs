@@ -128,6 +128,7 @@ namespace ShufflePlay
                 }
             });
 
+            this.PlayingTracks.Clear();
             this.Playing = false;
 
             return;
