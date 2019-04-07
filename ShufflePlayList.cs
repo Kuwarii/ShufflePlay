@@ -110,6 +110,15 @@ namespace ShufflePlay
         }
 
         /// <summary>
+        /// Resets the tracks.
+        /// </summary>
+        /// <param name="tracks">The tracks.</param>
+        public void ResetTracks(IEnumerable<string> tracks)
+        {
+            this.OriginalTracks = tracks.ToList();
+        }
+
+        /// <summary>
         /// Shuffles the play asynchronous.
         /// </summary>
         /// <returns></returns>
