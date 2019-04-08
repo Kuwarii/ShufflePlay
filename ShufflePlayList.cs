@@ -140,9 +140,12 @@ namespace ShufflePlay
 
                 Random rnd = new Random(seed);
 
-                this.PlayingTracks.Clear();
-                this.PlayingTracks.AddRange(this.OriginalTracks);
-                this.ShuffleHistory.Clear();
+                //this.PlayingTracks.Clear();
+                if (this.PlayingTracks.Count == 0)
+                {
+                    this.PlayingTracks.AddRange(this.OriginalTracks);
+                    this.ShuffleHistory.Clear();
+                }
 
                 int count = 0;
 
@@ -165,7 +168,7 @@ namespace ShufflePlay
                 }
             });
 
-            this.PlayingTracks.Clear();
+            //this.PlayingTracks.Clear();
             this.Playing = false;
 
             return;
