@@ -44,17 +44,51 @@ namespace ShufflePlay
         /// <value>
         ///   <c>true</c> if playing; otherwise, <c>false</c>.
         /// </value>
-        protected bool Playing
+        public bool Playing
         {
             get
             {
                 return _playing;
             }
-            set
+            protected set
             {
                 _playing = value;
             }
         }
+
+        /// <summary>
+        /// The track counter
+        /// </summary>
+        private int _trackCounter = 0;
+
+        /// <summary>
+        /// Gets or sets the track counter.
+        /// </summary>
+        /// <value>
+        /// The track counter.
+        /// </value>
+        public int CurrentTrackNumber
+        {
+            get
+            {
+                return _trackCounter;
+            }
+        }
+
+        /// <summary>
+        /// Converts to taltracks.
+        /// </summary>
+        /// <value>
+        /// The total tracks.
+        /// </value>
+        public int TotalTracks
+        {
+            get
+            {
+                return this.OriginalTracks.Count;
+            }
+        }
+
 
         /// <summary>
         /// Gets the songs tracks.
@@ -143,15 +177,14 @@ namespace ShufflePlay
                 //this.PlayingTracks.Clear();
                 if (this.PlayingTracks.Count == 0)
                 {
+                    _trackCounter = 0;
                     this.PlayingTracks.AddRange(this.OriginalTracks);
                     this.ShuffleHistory.Clear();
                 }
 
-                int count = 0;
-
                 while (this.PlayingTracks.Count > 0 && this.Playing)
                 {
-                    count++;
+                    this._trackCounter++;
                     int track = rnd.Next(0, this.PlayingTracks.Count);
 
                     if (!this.ShuffleHistory.ContainsKey(this.PlayingTracks[track]))
@@ -160,7 +193,7 @@ namespace ShufflePlay
                         this.ShuffleHistory.Add(this.PlayingTracks[track], this.PlayingTracks[track]);
 
                         // Play song at this point...
-                        Console.WriteLine("{1:000}. Playing {0}", this.PlayingTracks[track], count);
+                        Console.WriteLine("{1:000}. Playing {0}", this.PlayingTracks[track], _trackCounter);
                         Thread.Sleep(200);
                     }
 

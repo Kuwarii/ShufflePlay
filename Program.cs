@@ -63,6 +63,16 @@ namespace ShufflePlay
                         Console.WriteLine("\n*\n* COMMITTING\n*");
                         tracks = shufflePlayList.OriginalSongsTracks.ToList();
                         break;
+
+                    case "L":
+                        Console.WriteLine("\n*\n* LISTING\n*");
+                        int tc = 0;
+
+                        foreach (string track in shufflePlayList.OriginalSongsTracks)
+                        {
+                            Console.WriteLine("{0:000}. {1}", ++tc, track);
+                        }
+                        break;
                 }
 
             }
